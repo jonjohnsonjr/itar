@@ -28,4 +28,26 @@ func main() {
 		}
 	}
 }
+
+func before() {
+    tr := tar.NewReader(os.Stdin)
+    for {
+        hdr, err := tr.Next()
+        if err != nil {
+            if errors.Is(err, io.EOF) {
+                break
+            }
+
+            panic(err)
+        }
+
+        fmt.Println(hdr.FileInfo().(fmt.Stringer).String())
+
+        if n, err := io.Copy(io.Discard, tr); err != nil {
+            panic(err)
+        } else {
+            fmt.Printf("read %d bytes\n", n)
+        }
+    }
+}
 ```
