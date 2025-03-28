@@ -6,7 +6,10 @@ This provides an iterator for `archive/tar`.
 package main
 
 import (
+	"archive/tar"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/jonjohnsonjr/itar"
@@ -30,24 +33,24 @@ func main() {
 }
 
 func before() {
-    tr := tar.NewReader(os.Stdin)
-    for {
-        hdr, err := tr.Next()
-        if err != nil {
-            if errors.Is(err, io.EOF) {
-                break
-            }
+	tr := tar.NewReader(os.Stdin)
+	for {
+		hdr, err := tr.Next()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
 
-            panic(err)
-        }
+			panic(err)
+		}
 
-        fmt.Println(hdr.FileInfo().(fmt.Stringer).String())
+		fmt.Println(hdr.FileInfo().(fmt.Stringer).String())
 
-        if n, err := io.Copy(io.Discard, tr); err != nil {
-            panic(err)
-        } else {
-            fmt.Printf("read %d bytes\n", n)
-        }
-    }
+		if n, err := io.Copy(io.Discard, tr); err != nil {
+			panic(err)
+		} else {
+			fmt.Printf("read %d bytes\n", n)
+		}
+	}
 }
 ```
